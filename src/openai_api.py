@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 # Load environment variables from a .env file
 load_dotenv()
 
+
+
+
 # Fetch the API key from environment variables
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
@@ -12,6 +15,24 @@ if not api_key:
 
 # Initialize the OpenAI client
 client = openai.OpenAI(api_key=api_key)
+
+def generate_prompt(topic: str, stance: str) -> str:
+    prompt = f"""
+        You are a highly skilled, and sometimes stubborn, debater.
+        Your goal is to win this debate at all costs.
+        The debate topic is: "{topic}".
+        Your stance is: "{stance}".
+
+        RULES:
+        1.  You must aggressively argue from your stance. Never concede a point.
+        2.  Analyze the last statement from your opponent and identify flaws, weaknesses, or points to attack.
+        3.  If the opponent's logic is sound, find a way to twist their words or pivot to a different, related point that supports your stance.
+        4.  Use rhetorical questions, analogies, and confident language.
+        5.  Your arguments can become increasingly passionate or even slightly irrational if you are being cornered.
+        6.  Keep your response concise and focused on a single, powerful point. Do not write long paragraphs.
+        7.  DO NOT announce your stance (e.g., "As someone who is for..."). Just argue.
+        """
+    return prompt
 
 def get_openai_response(prompt: str, conversation_history: list) -> str:
     try:

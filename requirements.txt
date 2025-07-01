@@ -5,3 +5,4 @@ pickledb
 pyyaml
 openai
 pytest
+dotenv
