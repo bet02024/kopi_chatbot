@@ -1,6 +1,7 @@
-from openai_api import get_openai_response, generate_prompt
+from openai_api import get_openai_response, generate_prompt, generate_topic_prompt
 import uuid
 from pickledb import PickleDB
+import json
 
 db = PickleDB("data/conversations.json")
 
@@ -10,7 +11,7 @@ class DebateAgent:
          and attempting to persuade its opponent.
     """
 
-    def __init__(self, topic: str, stance: str):
+    def __init__(self, topic="": str, stance="": str):
         """ Initializes the DebateAgent Args:
                 topic (str): The topic of the debate.
                 stance (str): The agent's position ("For the topic" | "Against the topic").
@@ -36,13 +37,14 @@ class DebateAgent:
 
     def save_conversation(self, message, initial=False):
         """  Append a message to the history and save full conversation state.  """
-        conversation = db.get(self.conversation_id) or {}
-        conversation["topic"] = self.topic
-        conversation["stance"] = self.stance
+        conversation = db.get(self.conversation_id) or None
+        if conversation is None:
+            conversation["topic"] = self.topic
+            conversation["stance"] = self.stance
+            conversation["history"] = self.conversation_history
+
         if initial:
             conversation["history"] = []
-        else:
-            conversation["history"] = self.conversation_history
 
         if message:
             conversation["history"].append(message)
@@ -64,22 +66,43 @@ class DebateAgent:
         self.conversation_history = conv["history"]
         return conv["history"] if conv and "history" in conv else []
 
+    def detect_topic(self, message):
+        """  Detect Topic & Stance from the first message in the conversation.
+        """
+        try:
+            prompt =  generate_topic_prompt(message)
+            response = get_openai_response(prompt, None)
+            response_json = json.loads(response)
+            if response_json['topic'] and response_json['stance']:
+                self.topic = response_json['topic']
+                self.stance = response_json['stance']
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return False
+
     def generate_argument(self) -> str:
         """  Generates the next argument in the debate and updates conversation.
                 Returns str: The generated argument as a string.
         """
-        prompt = generate_prompt(self.topic, self.stance)
-        response = get_openai_response(prompt, self.conversation_history)
-        self.update_history("assistant", response)
-        return response
+        try:
+            prompt = generate_prompt(self.topic, self.stance)
+            response = get_openai_response(prompt, self.conversation_history)
+            self.update_history("bot", response)
+            return response
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return "An unexpected error occurred."
 
     def update_history(self, role: str, text: str):
         """  Updates the conversation history for this agent, and persists to PickleDB.
                 Args:
-                    role (str): The role of the speaker ('user' for opponent, 'assistant' for self).
+                    role (str): The role of the speaker ('user' for opponent, 'bot' for self).
                     text (str): The text of the statement.
         """
-        self.save_conversation({"role": role, "content": text})
+        self.save_conversation({"role": role, "message": text})
 
 
 async def get_response(conversation):

@@ -1,8 +1,6 @@
-fastapi
-uvicorn
-gradio
+flask
+flask_cors
 pickledb
-pyyaml
 openai
 pytest
 dotenv
