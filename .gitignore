@@ -1,0 +1,5 @@
+.env
+lib/*
+include/*
+.pytest_cache?*
+pyvenv.cfg
