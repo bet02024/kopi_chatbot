@@ -1,5 +1,6 @@
 .env
 lib/*
+bin/*
 include/*
-.pytest_cache?*
+.pytest_cache/*
 pyvenv.cfg

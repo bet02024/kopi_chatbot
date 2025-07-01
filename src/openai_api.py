@@ -1,14 +1,8 @@
 import os
 import openai
 from dotenv import load_dotenv
-
 # Load environment variables from a .env file
 load_dotenv()
-
-
-
-
-# Fetch the API key from environment variables
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("OPENAI_API_KEY environment variable not found. Please set it in a .env file or your system environment.")
@@ -44,8 +38,8 @@ def get_openai_response(prompt: str, conversation_history: list) -> str:
         response = client.chat.completions.create(
             model="gpt-4.1-nano-2025-04-14",   
             messages=messages,
-            temperature=0.8,  # Higher temperature for more creative/less predictable responses
-            max_tokens=250,
+            temperature=0.8,
+            max_tokens=500,
             top_p=1.0,
             frequency_penalty=0.5,  
             presence_penalty=0.5 

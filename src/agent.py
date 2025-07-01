@@ -21,6 +21,19 @@ class DebateAgent:
         self.conversation_history = []
         self.save_conversation(None, initial=True)
 
+    def get_state(self, conversation_id: str) -> bool:
+        """ Retrieve the DebateAgent from conversation_id Args:
+                conversation_id (str): id of the conversation.
+        """
+        conversation = db.get(self.conversation_id)
+        if conversation:
+            self.topic = conversation['topic']
+            self.stance = conversation['stance']
+            self.conversation_history = conversation["history"]
+            return True
+        else:
+            return False
+
     def save_conversation(self, message, initial=False):
         """  Append a message to the history and save full conversation state.  """
         conversation = db.get(self.conversation_id) or {}
