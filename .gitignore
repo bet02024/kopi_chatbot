@@ -6,3 +6,5 @@ include/*
 pyvenv.cfg
 .vercel
 __pycache__/*
+__pytest/*
+.pytest_cache/*
