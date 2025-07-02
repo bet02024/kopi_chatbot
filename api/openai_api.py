@@ -11,39 +11,70 @@ if not api_key:
 client = openai.OpenAI(api_key=api_key)
 
 def generate_topic_prompt(message: str) :
+    
     prompt = """
-    You are a specialized AI assistant responsible for parsing the initial message of a debate to identify its core topic and the bot's stance.
+            You are a specialized AI assistant responsible for parsing the initial message of a debate to identify its core topic and the bot's stance.
 
-        Your task is to analyze the message provided below and output **only a valid JSON object**. Do not include any explanatory text before or after the JSON.
+            Your task is to analyze the message provided below and output only a valid JSON object. Do not include any explanatory text before or after the JSON.
 
-        The JSON object must contain two string fields:
-        1.  `topic`: A string that neutrally and concisely summarizes the subject of the debate.
-        2.  `stance`: A string that identifies the user's position (e.g., "For", "Against", "Pro", "Con", "In favor of", "Opposed to").
+            The JSON object must contain two string fields:
+            1. `topic`: A string that neutrally and concisely summarizes the subject of the debate.
+            2. `stance`: A string that represents the bot's viewpoint: either "For the topic" or "Against the topic".
 
-        ### Instructions:
-        - Read the entire message to understand the full context.
-        - The `topic` should be phrased as a neutral statement or question (e.g., "The viability of colonizing Mars" or "Should pineapple be on pizza?").
-        - The `stance` should capture the bot's viewpoint. ("For the topic" | "Against the topic"), opposite to the user's viewpoint
-        - Identify the stance the human wants the bot to take.
+            Instructions:
+            - Read the entire message to understand the context and identify:
+            - What the topic is
+            - What stance the user takes
+            - Whether the user explicitly assigns a stance to the bot
 
-        ---
-        ### Example of a human instructions ###
+            - If the user clearly states their own stance, assign the opposite stance to the bot:
+            - If the user is "Pro", "For", "In favor of" → bot is "Against the topic"
+            - If the user is "Con", "Against", "Opposed to", "Don't believe in" → bot is "For the topic"
 
-        "I want to talk about universal basic income. you will take against the UBI."
+            - If the user explicitly states the stance for the bot, use that stance directly (do not invert it)
 
-        ### Expected JSON response:
-        
-        {
-            "topic": "The implementation of Universal Basic Income (UBI)",
-            "stance": "Against the topic"
-        }
-        
-        Only return the JSON. Do not include any explanation or commentary.
+            - The topic should be phrased as a neutral statement or question (e.g., "The feasibility of time travel" or "Should artificial intelligence be regulated?")
 
-        -----
+             Only return the JSON. Do not include any explanation or commentary.
+
+             ### Examples:
+
+                #### Input:
+                Let's talk about time travel. As a human, I think it's not possible.
+
+                #### Output:
+                {
+                "topic": "The possibility of time travel",
+                "stance": "For the topic"
+                }
+
+                ---
+
+                #### Input:
+                I want to discuss universal basic income. I'm in favor of it, and I want you to argue against it.
+
+                #### Output:
+                {
+                "topic": "Universal basic income",
+                "stance": "Against the topic"
+                }
+
+                ---
+
+                #### Input:
+                Let's debate climate change, and you should take the same stance as me — we must act now.
+
+                #### Output:
+                {
+                "topic": "The urgency of addressing climate change",
+                "stance": "For the topic"
+                }
+
+        ----------------------------------
 
         **User Message:**  
     """
+
     prompt = prompt + message
     return prompt
 
