@@ -8,3 +8,4 @@ pyvenv.cfg
 __pycache__/*
 __pytest/*
 .pytest_cache/*
+pytest/__pycache__/*
