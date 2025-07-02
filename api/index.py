@@ -1,4 +1,8 @@
 from flask import Flask, request, jsonify
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from api.agent import DebateAgent
  
 app = Flask(__name__)

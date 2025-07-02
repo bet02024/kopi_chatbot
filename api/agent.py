@@ -1,3 +1,9 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from api.openai_api import get_openai_response, generate_prompt, generate_topic_prompt
 import uuid
 from pickledb import PickleDB
