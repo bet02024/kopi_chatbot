@@ -18,7 +18,7 @@ Create a .env file with
 
 OPENAI_API_KEY=YOUR_OPENAI_API_KEY    **Replace with your own YOUR_OPENAI_API_KEY**
 
-# Run the chatbot
+# Run the chatbot with Vercel CLI
 
 From terminal 
 
@@ -26,6 +26,14 @@ From terminal
     cd kopi_chatbot
     make install
     make run
+
+# Run whitout Vercel CLI
+
+    cd kopi_chatbot
+    python3.13 -m venv ./
+    source  ./bin/activate 
+    pip3.13 install -r requirements.txt 
+    flask --app api/index run
 
 
 # Available commands
