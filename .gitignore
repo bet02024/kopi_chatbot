@@ -4,3 +4,5 @@ bin/*
 include/*
 .pytest_cache/*
 pyvenv.cfg
+.vercel
+__pycache__/*
