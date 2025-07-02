@@ -1,4 +1,4 @@
-from openai_api import get_openai_response, generate_prompt, generate_topic_prompt
+from api.openai_api import get_openai_response, generate_prompt, generate_topic_prompt
 import uuid
 from pickledb import PickleDB
 import json

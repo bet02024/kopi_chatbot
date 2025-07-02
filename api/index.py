@@ -1,10 +1,7 @@
 from flask import Flask, request, jsonify
-#from flask_cors import CORS
-from agent import DebateAgent
+from api.agent import DebateAgent
  
 app = Flask(__name__)
-#CORS(app)
-
 
 @app.route("/", methods=["GET"])
 def root():
