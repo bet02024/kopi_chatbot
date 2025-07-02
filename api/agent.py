@@ -45,7 +45,7 @@ class DebateAgent:
             conversation["history"] = []
 
         self.conversation_history.append(message)
-        #conversation["history"].append(message)
+        conversation["history"] = self.conversation_history
         db.set(self.conversation_id, conversation)
         db.save()
 
