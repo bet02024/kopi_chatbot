@@ -10,8 +10,8 @@ if not api_key:
 # Initialize the OpenAI client
 client = openai.OpenAI(api_key=api_key)
 
-def generate_topic_prompt(message: str )
-    prompt = f"""
+def generate_topic_prompt(message: str) :
+    prompt = """
     You are a specialized AI assistant responsible for parsing the initial message of a debate to identify its core topic and the bot's stance.
 
         Your task is to analyze the message provided below and output **only a valid JSON object**. Do not include any explanatory text before or after the JSON.
@@ -24,29 +24,28 @@ def generate_topic_prompt(message: str )
         - Read the entire message to understand the full context.
         - The `topic` should be phrased as a neutral statement or question (e.g., "The viability of colonizing Mars" or "Should pineapple be on pizza?").
         - The `stance` should capture the bot's viewpoint. ("For the topic" | "Against the topic"), opposite to the user's viewpoint
-        - If the topic or stance is ambiguous or not present, use "Unclear" for the respective field.
+        - Identify the stance the human wants the bot to take.
 
         ---
-        ### Example ###
+        ### Example of a human instructions ###
 
-          "I want to talk about universal basic income. you will take be against the UBI."
+        "I want to talk about universal basic income. you will take against the UBI."
 
-        ### Expected JSON Output:
-
-        ```json
+        ### Expected JSON response:
+        
         {
-        "topic": "The implementation of Universal Basic Income (UBI)",
-        "stance": "Against the topic"
+            "topic": "The implementation of Universal Basic Income (UBI)",
+            "stance": "Against the topic"
         }
-        ```
+        
+        Only return the JSON. Do not include any explanation or commentary.
 
-        -----------------------------------------------------------------
+        -----
 
         **User Message:**  
-         
-        "{message}".
-
     """
+    prompt = prompt + message
+    return prompt
 
 def generate_prompt(topic: str, stance: str) -> str:
     prompt = f"""
@@ -69,10 +68,18 @@ def generate_prompt(topic: str, stance: str) -> str:
 def get_openai_response(prompt: str, conversation_history: list) -> str:
     try:
         # Combine the system prompt with the conversation history
+
+        for item in conversation_history:
+            if "message" in item:
+                item["content"] = item.pop("message")
+            if item["role"] == "bot":
+                item["role"] = "assistant"
+                
         messages = [
             {"role": "system", "content": prompt},
         ] + conversation_history
 
+        print(messages)
         response = client.chat.completions.create(
             model="gpt-4.1-nano-2025-04-14",   
             messages=messages,
