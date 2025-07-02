@@ -1,5 +1,9 @@
 import pytest
-from agent import DebateAgent
+import sys
+import os
+# Add the parent directory (my_project) to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from api.agent import DebateAgent
 
 
 def test_agent_for():
